@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>💗 BUCIN LAND — LOVE QUIZ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #ffe6f0 0%, #f8d5ff 40%, #e8d0ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      position: relative;
+      overflow-x: hidden;
+      transition: background 0.4s;
+    }
+
+    /* floating hearts background */
+    .hearts-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .heart-float {
+      position: absolute;
+      color: #ff9ecb;
+      opacity: 0.3;
+      font-size: 24px;
+      animation: floatHeart 8s infinite ease-in-out;
+      user-select: none;
+    }
+
+    @keyframes floatHeart {
+      0% { transform: translateY(110vh) rotate(0deg) scale(0.8); opacity: 0.2; }
+      50% { transform: translateY(30vh) rotate(15deg) scale(1.3); opacity: 0.5; }
+      100% { transform: translateY(-20vh) rotate(30deg) scale(0.9); opacity: 0; }
+    }
+
+    /* === MAIN APP CONTAINER === */
+    .app {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 48px;
+      box-shadow: 0 25px 50px -8px rgba(200, 80, 150, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.6) inset;
+      padding: 28px 24px 32px;
+      position: relative;
+      z-index: 10;
+      border: 1px solid rgba(255, 200, 230, 0.7);
+      transition: all 0.3s ease;
+    }
+
+    /* === SCREEN TRANSITIONS === */
+    .screen {
+      display: none;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .screen.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* === HEADER / TITLE === */
+    .game-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      text-align: center;
+      background: linear-gradient(135deg, #d6336c, #9b59b6, #e84393);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .game-sub {
+      text-align: center;
+      color: #a64d79;
+      font-weight: 500;
+      font-size: 0.95rem;
+      margin-bottom: 22px;
+      opacity: 0.8;
+    }
+
+    /* === DASHBOARD BUTTONS === */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 18px 0 8px;
+    }
+
+    .menu-btn {
+      background: white;
+      border: none;
+      padding: 18px 10px;
+      border-radius: 28px;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #5e2e5a;
+      box-shadow: 0 8px 18px -6px rgba(190, 90, 150, 0.25), 0 0 0 1px rgba(255, 220, 240, 0.9) inset;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(4px);
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 200, 230, 0.7);
+    }
+
+    .menu-btn:active {
+      transform: scale(0.96);
+      background: #ffe6f2;
+    }
+
+    .menu-btn .emoji {
+      font-size: 1.9rem;
+      line-height: 1;
+    }
+
+    .menu-btn span:last-child {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* === BACK BUTTON & GENERAL BUTTONS === */
+    .btn {
+      border: none;
+      background: linear-gradient(135deg, #f78fb3, #d47fa6);
+      color: white;
+      font-weight: 700;
+      padding: 16px 18px;
+      border-radius: 60px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 8px 18px -6px #d47fa6;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #b34180;
+      box-shadow: 0 8px 18px -8px #e0a6c4, 0 0 0 1px #f7c8dd inset;
+    }
+
+    .btn-small {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+      width: auto;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .btn-group .btn {
+      flex: 1 1 0;
+      min-width: 120px;
+    }
+
+    /* === QUIZ SCREEN === */
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .score-badge {
+      background: #ffe0f0;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      color: #b34180;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .timer-badge {
+      background: #fff0f5;
+      padding: 8px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      color: #d6336c;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .question-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #3d1e38;
+      margin: 22px 0 20px;
+      line-height: 1.4;
+      text-align: center;
+      min-height: 4.5rem;
+      padding: 0 6px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 8px 0 12px;
+    }
+
+    .option {
+      background: rgba(255, 255, 255, 0.8);
+      border: 2px solid #f7c8dd;
+      border-radius: 50px;
+      padding: 16px 20px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #542b4b;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 10px rgba(200, 150, 180, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .option:active {
+      transform: scale(0.98);
+    }
+
+    .option.correct {
+      background: #c8f7d0;
+      border-color: #3b9e5a;
+      color: #1b6b37;
+      box-shadow: 0 0 0 3px rgba(60, 180, 100, 0.3);
+    }
+
+    .option.wrong {
+      background: #ffe0e0;
+      border-color: #e06b6b;
+      color: #a13030;
+      box-shadow: 0 0 0 3px rgba(220, 80, 80, 0.2);
+    }
+
+    .option.disabled {
+      pointer-events: none;
+      opacity: 0.7;
+    }
+
+    .feedback {
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+      min-height: 1.6rem;
+      margin: 8px 0 0;
+      color: #b34180;
+    }
+
+    /* === RESULT SCREEN === */
+    .result-card {
+      background: rgba(255, 240, 248, 0.8);
+      border-radius: 32px;
+      padding: 24px 18px;
+      margin: 16px 0 10px;
+      text-align: center;
+      border: 1px solid #f7c8dd;
+    }
+
+    .result-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #a12b6f;
+      margin-bottom: 8px;
+    }
+
+    .result-stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    .stat-item {
+      font-size: 1rem;
+      color: #5e2e5a;
+    }
+
+    .stat-item strong {
+      font-size: 1.3rem;
+      color: #d6336c;
+    }
+
+    .rank-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #f9d6e8, #f2c4dd);
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #6b1f4d;
+      margin: 12px 0 6px;
+      border: 2px solid #ffb6d9;
+    }
+
+    /* === SCOREBOARD === */
+    .score-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+
+    .score-table th {
+      text-align: left;
+      padding: 8px 10px;
+      color: #a64d79;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 2px solid #f0b6d4;
+    }
+
+    .score-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #f0d0e0;
+      font-weight: 600;
+      color: #4a2640;
+    }
+
+    .empty-score {
+      text-align: center;
+      color: #b38b9e;
+      padding: 28px 0;
+    }
+
+    /* === SETTINGS === */
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid #f0d0e0;
+    }
+
+    .setting-row label {
+      font-weight: 600;
+      color: #4a2640;
+      font-size: 1.05rem;
+    }
+
+    .toggle-btn {
+      background: #ddd0d8;
+      border: none;
+      width: 60px;
+      height: 32px;
+      border-radius: 40px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      padding: 0;
+    }
+
+    .toggle-btn.on {
+      background: #e07ab0;
+    }
+
+    .toggle-btn::after {
+      content: '';
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: white;
+      top: 3px;
+      left: 3px;
+      transition: transform 0.2s;
+    }
+
+    .toggle-btn.on::after {
+      transform: translateX(28px);
+    }
+
+    /* === ABOUT === */
+    .about-text {
+      color: #4a2640;
+      line-height: 1.6;
+      font-size: 0.98rem;
+      margin: 12px 0;
+    }
+
+    .about-text strong {
+      color: #b34180;
+    }
+
+    /* === TOAST NOTIFICATION === */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #4a2640;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 1000;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 480px) {
+      .app { padding: 20px 16px 26px; border-radius: 36px; }
+      .game-title { font-size: 1.7rem; }
+      .menu-btn { padding: 14px 8px; border-radius: 22px; }
+      .menu-btn .emoji { font-size: 1.6rem; }
+      .menu-btn span:last-child { font-size: 0.8rem; }
+      .question-text { font-size: 1.25rem; }
+      .option { padding: 14px 16px; font-size: 0.95rem; }
+      .btn { padding: 14px 14px; font-size: 1rem; }
+      .btn-small { padding: 8px 14px; font-size: 0.85rem; }
+      .rank-badge { font-size: 1.15rem; padding: 10px 22px; }
+      .result-title { font-size: 1.5rem; }
+    }
+
+    @media (min-width: 700px) {
+      .menu-grid { grid-template-columns: repeat(4, 1fr); }
+      .game-title { font-size: 2.4rem; }
+    }
+
+    /* animasi love tambahan di dashboard */
+    .pulse-heart {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
+
+    /* Confetti / efek skor tinggi */
+    .confetti-piece {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background: #ff6b9d;
+      top: -20px;
+      z-index: 999;
+      pointer-events: none;
+      animation: confettiFall 2.5s linear forwards;
+    }
+
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- floating hearts background -->
+  <div class="hearts-bg" id="heartsBg"></div>
+
+  <!-- === MAIN APP === -->
+  <div class="app" id="app">
+    <!-- ========== DASHBOARD ========== -->
+    <div class="screen active" id="screenDashboard">
+      <div class="game-title">
+        <span>💗</span> BUCIN LAND <span>💗</span>
+      </div>
+      <div class="game-sub">Love Quiz — tebak-tebakan romantis & lucu</div>
+
+      <div class="menu-grid">
+        <button class="menu-btn" data-menu="mulai">
+          <span class="emoji">🎮</span>
+          <span>MULAI GAME</span>
+        </button>
+        <button class="menu-btn" data-menu="tebak">
+          <span class="emoji">💗</span>
+          <span>TEBAK-TEBAKAN</span>
+        </button>
+        <button class="menu-btn" data-menu="quiz">
+          <span class="emoji">❤️</span>
+          <span>QUIZ BUCIN</span>
+        </button>
+        <button class="menu-btn" data-menu="lucu">
+          <span class="emoji">😂</span>
+          <span>PERTANYAAN LUCU</span>
+        </button>
+        <button class="menu-btn" data-menu="skor">
+          <span class="emoji">🏆</span>
+          <span>PAPAN SKOR</span>
+        </button>
+        <button class="menu-btn" data-menu="setting">
+          <span class="emoji">⚙️</span>
+          <span>PENGATURAN</span>
+        </button>
+        <button class="menu-btn" data-menu="tentang" style="grid-column: span 2;">
+          <span class="emoji">ℹ️</span>
+          <span>TENTANG GAME</span>
+        </button>
+      </div>
+
+      <div class="btn-group" style="margin-top: 12px;">
+        <button class="btn btn-secondary btn-small" id="musicToggleDash" style="flex:1;">
+          🎵 Musik: <span id="musicStatusDash">OFF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== QUIZ SCREEN (dipakai semua mode) ========== -->
+    <div class="screen" id="screenQuiz">
+      <div class="quiz-header">
+        <div class="score-badge">⭐ <span id="quizScore">0</span></div>
+        <div class="timer-badge">⏳ <span id="quizTimer">15</span>s</div>
+        <button class="btn btn-secondary btn-small" id="quizExitBtn" style="width:auto; padding:8px 16px;">✕ Keluar</button>
+      </div>
+
+      <div class="question-text" id="questionText">Memuat...</div>
+
+      <div class="options" id="optionsContainer"></div>
+
+      <div class="feedback" id="feedbackMsg"></div>
+
+      <div style="display: flex; gap: 12px; margin-top: 12px;">
+        <button class="btn btn-secondary" id="nextBtn" style="flex:1; display:none;">➡️ Lanjut</button>
+      </div>
+    </div>
+
+    <!-- ========== RESULT SCREEN ========== -->
+    <div class="screen" id="screenResult">
+      <div class="result-card">
+        <div class="result-title">💖 Hasil Akhir 💖</div>
+        <div class="result-stats">
+          <div class="stat-item">Skor <br><strong id="finalScore">0</strong></div>
+          <div class="stat-item">Benar <br><strong id="finalCorrect">0</strong></div>
+          <div class="stat-item">Salah <br><strong id="finalWrong">0</strong></div>
+        </div>
+        <div style="font-size: 1.1rem; color: #5e2e5a;">Persentase: <strong id="finalPercent">0%</strong></div>
+        <div class="rank-badge" id="finalRank">Bucin Pemula</div>
+      </div>
+      <div class="btn-group">
+        <button class="btn" id="playAgainBtn">🔄 Main Lagi</button>
+        <button class="btn btn-secondary" id="backToDashBtn">🏠 Dashboard</button>
+      </div>
+    </div>
+
+    <!-- ========== SCOREBOARD ========== -->
+    <div class="screen" id="screenScoreboard">
+      <div class="game-title" style="font-size:1.8rem;">🏆 PAPAN SKOR</div>
+      <div id="scoreboardContent"></div>
+      <div class="btn-group" style="margin-top: 18px;">
+        <button class="btn btn-secondary" id="scoreBackBtn">🔙 Kembali</button>
+        <button class="btn btn-small" id="clearScoreBtn" style="flex:0.6;">🗑️ Hapus</button>
+      </div>
+    </div>
+
+    <!-- ========== SETTINGS ========== -->
+    <div class="screen" id="screenSettings">
+      <div class="game-title" style="font-size:1.8rem;">⚙️ PENGATURAN</div>
+      <div class="setting-row">
+        <label>🎵 Musik Latar</label>
+        <button class="toggle-btn" id="musicToggleSetting"></button>
+      </div>
+      <div class="setting-row">
+        <label>🔊 Efek Suara</label>
+        <button class="toggle-btn on" id="sfxToggleSetting"></button>
+      </div>
+      <div class="btn-group" style="margin-top: 24px;">
+        <button class="btn btn-secondary" id="settingsBackBtn">🔙 Kembali</button>
+      </div>
+    </div>
+
+    <!-- ========== ABOUT ========== -->
+    <div class="screen" id="screenAbout">
+      <div class="game-title" style="font-size:1.8rem;">ℹ️ TENTANG</div>
+      <div class="about-text">
+        <p><strong>BUCIN LAND — LOVE QUIZ</strong> adalah game tebak-tebakan romantis, lucu, dan menghibur.</p>
+        <p>Uji pengetahuan bucinmu, kumpulkan skor, dan raih gelar <strong>Raja/Ratu Bucin</strong>! 👑</p>
+        <p>🎮 Mode: Tebak-tebakan, Quiz Bucin, Tebak Hati, Would You Rather.</p>
+        <p>⭐ 10–20 pertanyaan per sesi, timer 15 detik, dan skor otomatis.</p>
+        <p style="margin-top: 12px; font-size: 0.9rem; opacity: 0.7;">Dibuat dengan 💗 — bisa dimainkan offline di HP maupun PC.</p>
+      </div>
+      <div class="btn-group" style="margin-top: 20px;">
+        <button class="btn btn-secondary" id="aboutBackBtn">🔙 Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- ============================================= -->
+  <!-- JAVASCRIPT -->
+  <!-- ============================================= -->
+  <script>
+    (function() {
+      "use strict";
+
+      // ================= DATA =================
+      // Mode 1: Tebak-tebakan (soal + opsi)
+      const TEBAK_TEBAKAN = [
+        { q: "Apa yang selalu dekat tapi tidak bisa disentuh?", opts: ["Hati", "Angin", "Bayangan", "Cinta"], ans: 2 },
+        { q: "Apa yang membuat seseorang senyum sendiri saat melihat HP?", opts: ["Chat gebetan", "Iklan", "Baterai low", "Notifikasi bank"], ans: 0 },
+        { q: "Apa yang lebih manis dari cokelat?", opts: ["Gula", "Madu", "Senyum kamu", "Sirup"], ans: 2 },
+        { q: "Apa yang bikin hati berdebar tapi bukan karena sakit?", opts: ["Deg-degan ketemu doi", "Lari marathon", "Nonton horor", "Kaget"], ans: 0 },
+        { q: "Apa yang hilang saat kamu jatuh cinta?", opts: ["Akal sehat", "Dompet", "Kunci", "Sepatu"], ans: 0 },
+        { q: "Apa yang selalu ada di hati tapi tak terlihat?", opts: ["Rindu", "Debu", "Bakteri", "Angin"], ans: 0 },
+        { q: "Apa yang bikin waktu terasa cepat?", opts: ["Tidur", "Bersama doi", "Belajar", "Antre"], ans: 1 },
+        { q: "Apa yang paling ditunggu saat jauh dari pasangan?", opts: ["Video call", "Makanan", "Uang", "Liburan"], ans: 0 },
+        { q: "Apa yang bisa bikin hati pecah tapi bukan kaca?", opts: ["Patah hati", "Batu", "Palu", "Gempa"], ans: 0 },
+        { q: "Apa yang selalu kamu bawa kemana-mana tapi tak terlihat?", opts: ["Perasaan", "Tas", "Dompet", "HP"], ans: 0 }
+      ];
+
+      // Mode 2: Quiz Bucin
+      const QUIZ_BUCIN = [
+        { q: "Kalau pasangan sedang marah, apa yang harus dilakukan?", opts: ["Diamkan saja", "Minta maaf & peluk", "Balas marah", "Kabur"], ans: 1 },
+        { q: "Apa arti perhatian dalam hubungan?", opts: ["Hal kecil yang berarti", "Membeli barang mahal", "Cemburu berlebihan", "Selalu bersama"], ans: 0 },
+        { q: "Lebih penting mana, kata-kata atau tindakan?", opts: ["Kata-kata manis", "Tindakan nyata", "Keduanya seimbang", "Hadiah"], ans: 2 },
+        { q: "Kalau seseorang selalu ada saat dibutuhkan, apa artinya?", opts: ["Dia peduli", "Dia pengangguran", "Dia tidak sibuk", "Dia terpaksa"], ans: 0 },
+        { q: "Apa kunci hubungan awet?", opts: ["Komunikasi & kepercayaan", "Cemburu", "Uang", "Penampilan"], ans: 0 },
+        { q: "Apa yang bikin hubungan terasa membosankan?", opts: ["Kebiasaan & rutinitas", "Komunikasi", "Kejutan kecil", "Jalan-jalan"], ans: 0 },
+        { q: "Apa yang harus dilakukan saat salah?", opts: ["Mengaku & minta maaf", "Diam", "Menyalahkan", "Kabur"], ans: 0 },
+        { q: "Apa tanda seseorang benar-benar cinta?", opts: ["Mau berkorban", "Selalu memuji", "Sering minta uang", "Cemburu buta"], ans: 0 },
+        { q: "Apa yang bikin hubungan jarak jauh bertahan?", opts: ["Kepercayaan & komunikasi", "Cemburu", "Panggilan setiap jam", "Hadiah"], ans: 0 },
+        { q: "Apa arti 'bucin' sebenarnya?", opts: ["Budak cinta", "Buku cinta", "Bucin adalah cinta", "Bujang cinta"], ans: 0 }
+      ];
+
+      // Mode 3: Tebak Hati (petunjuk)
+      const TEBAK_HATI = [
+        { q: "Aku selalu ada saat kamu sedih, tapi aku bukan manusia. Siapakah aku?", opts: ["Musik", "Pelukan", "Teman", "Hujan"], ans: 1 },
+        { q: "Aku membuatmu tersenyum saat melihat pesan masuk. Siapakah aku?", opts: ["Notifikasi chat doi", "Iklan", "Email", "Spam"], ans: 0 },
+        { q: "Aku terasa hangat dan menenangkan, biasanya dari orang tersayang. Apakah aku?", opts: ["Pelukan", "Selimut", "Kopi", "Mandi air hangat"], ans: 0 },
+        { q: "Aku bisa membuatmu terjaga semalaman memikirkan seseorang. Siapakah aku?", opts: ["Rindu", "Kopi", "Insomnia", "Film horor"], ans: 0 },
+        { q: "Aku adalah tempat pulang paling nyaman, bukan rumah. Apakah aku?", opts: ["Pelukan pasangan", "Kasur", "Kamar", "Restoran"], ans: 0 },
+        { q: "Aku adalah bukti bahwa seseorang peduli tanpa perlu kata-kata. Apakah aku?", opts: ["Perhatian kecil", "Hadiah mahal", "Pujian", "Chat panjang"], ans: 0 }
+      ];
+
+      // Mode 4: Would You Rather
+      const WOULD_YOU_RATHER = [
+        { q: "Pilih salah satu:", opts: ["Dipeluk setiap hari", "Dikasih hadiah setiap bulan"], ans: 0 },
+        { q: "Mana yang kamu pilih?", opts: ["Pasangan romantis", "Pasangan humoris"], ans: 1 },
+        { q: "Pilih:", opts: ["Kencan di pantai", "Kencan di gunung"], ans: 0 },
+        { q: "Mana yang lebih baik?", opts: ["Pasangan setia", "Pasangan kaya"], ans: 0 },
+        { q: "Pilih:", opts: ["Diingat setiap hari", "Diingat saat ulang tahun saja"], ans: 0 },
+        { q: "Mana yang kamu mau?", opts: ["Hubungan jarak jauh", "Hubungan tanpa komunikasi"], ans: 0 },
+        { q: "Pilih:", opts: ["Pasangan yang jujur", "Pasangan yang selalu memuji"], ans: 0 },
+        { q: "Mana yang lebih romantis?", opts: ["Bunga mawar", "Surat cinta tulisan tangan"], ans: 1 }
+      ];
+
+      // Gabungan soal untuk mode "MULAI GAME" (campuran)
+      const ALL_QUESTIONS = [
+        ...TEBAK_TEBAKAN.slice(0, 3).map(q => ({...q, mode: 'tebak'})),
+        ...QUIZ_BUCIN.slice(0, 3).map(q => ({...q, mode: 'quiz'})),
+        ...TEBAK_HATI.slice(0, 2).map(q => ({...q, mode: 'hati'})),
+        ...WOULD_YOU_RATHER.slice(0, 2).map(q => ({...q, mode: 'wyr'}))
+      ];
+
+      // ================= STATE =================
+      let currentQuestions = [];
+      let currentIndex = 0;
+      let score = 0;
+      let correctCount = 0;
+      let wrongCount = 0;
+      let timerInterval = null;
+      let timeLeft = 15;
+      let answered = false;
+      let currentMode = 'mulai';
+      let musicOn = false;
+      let sfxOn = true;
+      let audioCtx = null;
+
+      // Scoreboard from localStorage
+      let scoreboard = JSON.parse(localStorage.getItem('bucin_land_scores') || '[]');
+
+      // ================= DOM REFS =================
+      const screens = {
+        dashboard: document.getElementById('screenDashboard'),
+        quiz: document.getElementById('screenQuiz'),
+        result: document.getElementById('screenResult'),
+        scoreboard: document.getElementById('screenScoreboard'),
+        settings: document.getElementById('screenSettings'),
+        about: document.getElementById('screenAbout')
+      };
+
+      const questionText = document.getElementById('questionText');
+      const optionsContainer = document.getElementById('optionsContainer');
+      const feedbackMsg = document.getElementById('feedbackMsg');
+      const quizScore = document.getElementById('quizScore');
+      const quizTimer = document.getElementById('quizTimer');
+      const nextBtn = document.getElementById('nextBtn');
+      const musicToggleDash = document.getElementById('musicToggleDash');
+      const musicStatusDash = document.getElementById('musicStatusDash');
+      const musicToggleSetting = document.getElementById('musicToggleSetting');
+      const sfxToggleSetting = document.getElementById('sfxToggleSetting');
+      const toastEl = document.getElementById('toast');
+      const heartsBg = document.getElementById('heartsBg');
+
+      // ================= UTILS =================
+      function showScreen(name) {
+        Object.values(screens).forEach(s => s.classList.remove('active'));
+        if (screens[name]) screens[name].classList.add('active');
+        // reset quiz screen jika keluar
+        if (name !== 'quiz') {
+          clearInterval(timerInterval);
+        }
+      }
+
+      function showToast(msg, duration = 1800) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(toastEl._timeout);
+        toastEl._timeout = setTimeout(() => toastEl.classList.remove('show'), duration);
+      }
+
+      // ================= SOUND =================
+      function initAudio() {
+        if (!audioCtx) {
+          try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          } catch (e) { /* ignore */ }
+        }
+      }
+
+      function playTone(freq, type, duration, volume = 0.15) {
+        if (!sfxOn) return;
+        initAudio();
+        if (!audioCtx) return;
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type || 'sine';
+          osc.frequency.value = freq;
+          gain.gain.value = volume;
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+          osc.stop(audioCtx.currentTime + duration);
+        } catch (e) { /* ignore */ }
+      }
+
+      function playCorrect() {
+        playTone(880, 'sine', 0.12, 0.12);
+        setTimeout(() => playTone(1320, 'sine', 0.15, 0.1), 100);
+      }
+
+      function playWrong() {
+        playTone(280, 'sawtooth', 0.2, 0.1);
+        setTimeout(() => playTone(220, 'sawtooth', 0.2, 0.08), 120);
+      }
+
+      function playClick() {
+        playTone(600, 'square', 0.05, 0.05);
+      }
+
+      // ================= MUSIC =================
+      let musicInterval = null;
+      let musicNoteIndex = 0;
+
+      function startMusic() {
+        if (musicInterval) return;
+        initAudio();
+        if (!audioCtx) return;
+        // melodi sederhana ceria
+        const notes = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25, 440, 523.25, 659.25, 783.99, 880, 783.99, 659.25, 587.33, 523.25];
+        musicInterval = setInterval(() => {
+          if (!musicOn || !audioCtx) return;
+          try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = notes[musicNoteIndex % notes.length];
+            gain.gain.value = 0.04;
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+            osc.stop(audioCtx.currentTime + 0.35);
+            musicNoteIndex++;
+          } catch (e) { /* ignore */ }
+        }, 400);
+      }
+
+      function stopMusic() {
+        if (musicInterval) {
+          clearInterval(musicInterval);
+          musicInterval = null;
+        }
+      }
+
+      function toggleMusic() {
+        musicOn = !musicOn;
+        if (musicOn) {
+          initAudio();
+          startMusic();
+        } else {
+          stopMusic();
+        }
+        updateMusicUI();
+        playClick();
+      }
+
+      function updateMusicUI() {
+        const label = musicOn ? 'ON' : 'OFF';
+        musicStatusDash.textContent = label;
+        musicToggleSetting.classList.toggle('on', musicOn);
+        // Update toggle visual
+        if (musicOn) {
+          musicToggleDash.style.background = '#e07ab0';
+          musicToggleDash.style.color = 'white';
+        } else {
+          musicToggleDash.style.background = 'white';
+          musicToggleDash.style.color = '#b34180';
+        }
+      }
+
+      // ================= SFX UI =================
+      function updateSfxUI() {
+        sfxToggleSetting.classList.toggle('on', sfxOn);
+      }
+
+      // ================= HEARTS BACKGROUND =================
+      function spawnHearts() {
+        const symbols = ['❤️', '💗', '💖', '💕', '💘', '💝', '🌸', '✨'];
+        for (let i = 0; i < 14; i++) {
+          const el = document.createElement('div');
+          el.className = 'heart-float';
+          el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+          el.style.left = Math.random() * 100 + '%';
+          el.style.fontSize = (16 + Math.random() * 24) + 'px';
+          el.style.animationDelay = (Math.random() * 8) + 's';
+          el.style.animationDuration = (6 + Math.random() * 8) + 's';
+          heartsBg.appendChild(el);
+        }
+      }
+
+      // ================= QUIZ ENGINE =================
+      function shuffleArray(arr) {
+        const a = [...arr];
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function buildQuestionsForMode(mode) {
+        let pool = [];
+        switch (mode) {
+          case 'tebak': pool = TEBAK_TEBAKAN; break;
+          case 'quiz': pool = QUIZ_BUCIN; break;
+          case 'hati': pool = TEBAK_HATI; break;
+          case 'wyr': pool = WOULD_YOU_RATHER; break;
+          default: pool = ALL_QUESTIONS; break;
+        }
+        // Ambil 10-20 soal, kalau pool kurang dari 10, ambil semua
+        const shuffled = shuffleArray(pool);
+        const count = Math.min(shuffled.length, 20);
+        return shuffled.slice(0, count);
+      }
+
+      function startGame(mode) {
+        currentMode = mode;
+        let questions = [];
+        if (mode === 'mulai') {
+          // campuran dari semua mode
+          const all = [...TEBAK_TEBAKAN, ...QUIZ_BUCIN, ...TEBAK_HATI, ...WOULD_YOU_RATHER];
+          questions = shuffleArray(all).slice(0, 20);
+        } else {
+          questions = buildQuestionsForMode(mode);
+        }
+
+        if (!questions.length) {
+          showToast('Soal tidak tersedia 😢');
+          return;
+        }
+
+        currentQuestions = questions;
+        currentIndex = 0;
+        score = 0;
+        correctCount = 0;
+        wrongCount = 0;
+        answered = false;
+        showScreen('quiz');
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        if (currentIndex >= currentQuestions.length) {
+          finishGame();
+          return;
+        }
+        const q = currentQuestions[currentIndex];
+        questionText.textContent = q.q;
+        feedbackMsg.textContent = '';
+        nextBtn.style.display = 'none';
+        answered = false;
+
+        quizScore.textContent = score;
+
+        // render opsi
+        optionsContainer.innerHTML = '';
+        q.opts.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'option';
+          btn.textContent = opt;
+          btn.dataset.index = idx;
+          btn.addEventListener('click', () => selectAnswer(idx));
+          optionsContainer.appendChild(btn);
+        });
+
+        // timer
+        clearInterval(timerInterval);
+        timeLeft = 15;
+        quizTimer.textContent = timeLeft;
+
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          quizTimer.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            if (!answered) {
+              // waktu habis
+              answered = true;
+              wrongCount++;
+              playWrong();
+              feedbackMsg.textContent = '⏰ Waktu habis!';
+              // tandai semua opsi disable
+              document.querySelectorAll('.option').forEach(btn => btn.classList.add('disabled'));
+              // tampilkan jawaban benar
+              const correctIndex = currentQuestions[currentIndex].ans;
+              document.querySelectorAll('.option').forEach((btn, i) => {
+                if (i === correctIndex) btn.classList.add('correct');
+              });
+              nextBtn.style.display = 'flex';
+            }
+          }
+        }, 1000);
+      }
+
+      function selectAnswer(idx) {
+        if (answered) return;
+        answered = true;
+        clearInterval(timerInterval);
+
+        const q = currentQuestions[currentIndex];
+        const isCorrect = (idx === q.ans);
+        const allOpts = document.querySelectorAll('.option');
+
+        allOpts.forEach(btn => btn.classList.add('disabled'));
+
+        if (isCorrect) {
+          score += 10;
+          correctCount++;
+          quizScore.textContent = score;
+          playCorrect();
+          feedbackMsg.textContent = '✅ Benar! +10 poin';
+          allOpts[idx].classList.add('correct');
+        } else {
+          wrongCount++;
+          playWrong();
+          feedbackMsg.textContent = '❌ Salah!';
+          allOpts[idx].classList.add('wrong');
+          // tampilkan jawaban benar
+          allOpts[q.ans].classList.add('correct');
+        }
+
+        nextBtn.style.display = 'flex';
+      }
+
+      function nextQuestion() {
+        if (!answered) return;
+        currentIndex++;
+        if (currentIndex >= currentQuestions.length) {
+          finishGame();
+        } else {
+          renderQuestion();
+        }
+      }
+
+      function finishGame() {
+        clearInterval(timerInterval);
+        // hitung persentase
+        const total = currentQuestions.length;
+        const percent = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+
+        // simpan ke scoreboard
+        let rank = getRank(percent);
+        const entry = {
+          score: score,
+          correct: correctCount,
+          wrong: wrongCount,
+          total: total,
+          percent: percent,
+          rank: rank,
+          date: new Date().toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })
+        };
+        scoreboard.push(entry);
+        // simpan hanya 10 terbaik berdasarkan skor
+        scoreboard.sort((a, b) => b.score - a.score);
+        scoreboard = scoreboard.slice(0, 10);
+        localStorage.setItem('bucin_land_scores', JSON.stringify(scoreboard));
+
+        // tampilkan result
+        document.getElementById('finalScore').textContent = score;
+        document.getElementById('finalCorrect').textContent = correctCount;
+        document.getElementById('finalWrong').textContent = wrongCount;
+        document.getElementById('finalPercent').textContent = percent + '%';
+        document.getElementById('finalRank').textContent = rank;
+
+        showScreen('result');
+
+        // efek confetti jika persentase tinggi
+        if (percent >= 80) {
+          spawnConfetti();
+        }
+
+        // update scoreboard content nanti
+        renderScoreboard();
+      }
+
+      function getRank(percent) {
+        if (percent <= 30) return 'Bucin Pemula';
+        if (percent <= 60) return 'Bucin Menengah';
+        if (percent <= 80) return 'Bucin Profesional';
+        return 'Raja/Ratu Bucin';
+      }
+
+      // ================= CONFETTI =================
+      function spawnConfetti() {
+        const colors = ['#ff6b9d', '#f8d5ff', '#d47fa6', '#f9d6e8', '#ffb6d9', '#c8a2ff'];
+        for (let i = 0; i < 40; i++) {
+          const piece = document.createElement('div');
+          piece.className = 'confetti-piece';
+          piece.style.left = Math.random() * 100 + '%';
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.width = (6 + Math.random() * 10) + 'px';
+          piece.style.height = (6 + Math.random() * 10) + 'px';
+          piece.style.animationDuration = (1.5 + Math.random() * 2) + 's';
+          piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+          document.body.appendChild(piece);
+          setTimeout(() => piece.remove(), 3000);
+        }
+      }
+
+      // ================= SCOREBOARD =================
+      function renderScoreboard() {
+        const container = document.getElementById('scoreboardContent');
+        if (!scoreboard || scoreboard.length === 0) {
+          container.innerHTML = '<div class="empty-score">Belum ada skor. Ayo main dulu! 💗</div>';
+          return;
+        }
+        let html = '<table class="score-table"><thead><tr><th>#</th><th>Skor</th><th>Benar</th><th>%</th><th>Gelar</th></tr></thead><tbody>';
+        scoreboard.forEach((entry, i) => {
+          html += `<tr>
+            <td>${i + 1}</td>
+            <td><strong>${entry.score}</strong></td>
+            <td>${entry.correct}/${entry.total || 0}</td>
+            <td>${entry.percent || 0}%</td>
+            <td>${entry.rank || '-'}</td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      }
+
+      // ================= NAVIGATION =================
+      function goDashboard() {
+        showScreen('dashboard');
+        clearInterval(timerInterval);
+        updateMusicUI();
+      }
+
+      function goScoreboard() {
+        renderScoreboard();
+        showScreen('scoreboard');
+      }
+
+      function goSettings() {
+        updateMusicUI();
+        updateSfxUI();
+        showScreen('settings');
+      }
+
+      function goAbout() {
+        showScreen('about');
+      }
+
+      // ================= EVENT LISTENERS =================
+      // Menu buttons
+      document.querySelectorAll('[data-menu]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          playClick();
+          const menu = btn.dataset.menu;
+          switch (menu) {
+            case 'mulai': startGame('mulai'); break;
+            case 'tebak': startGame('tebak'); break;
+            case 'quiz': startGame('quiz'); break;
+            case 'lucu': startGame('wyr'); break;
+            case 'skor': goScoreboard(); break;
+            case 'setting': goSettings(); break;
+            case 'tentang': goAbout(); break;
+          }
+        });
+      });
+
+      // Quiz exit
+      document.getElementById('quizExitBtn').addEventListener('click', () => {
+        clearInterval(timerInterval);
+        goDashboard();
+      });
+
+      // Next button
+      nextBtn.addEventListener('click', () => {
+        nextQuestion();
+      });
+
+      // Play again
+      document.getElementById('playAgainBtn').addEventListener('click', () => {
+        startGame(currentMode);
+      });
+
+      // Back to dashboard from result
+      document.getElementById('backToDashBtn').addEventListener('click', () => {
+        goDashboard();
+      });
+
+      // Scoreboard back
+      document.getElementById('scoreBackBtn').addEventListener('click', () => {
+        goDashboard();
+      });
+
+      // Clear scores
+      document.getElementById('clearScoreBtn').addEventListener('click', () => {
+        if (confirm('Yakin ingin menghapus semua skor?')) {
+          scoreboard = [];
+          localStorage.setItem('bucin_land_scores', JSON.stringify(scoreboard));
+          renderScoreboard();
+          showToast('Skor dihapus 🗑️');
+        }
+      });
+
+      // Settings back
+      document.getElementById('settingsBackBtn').addEventListener('click', () => {
+        goDashboard();
+      });
+
+      // About back
+      document.getElementById('aboutBackBtn').addEventListener('click', () => {
+        goDashboard();
+      });
+
+      // Music toggle dashboard
+      musicToggleDash.addEventListener('click', () => {
+        toggleMusic();
+      });
+
+      // Music toggle setting
+      musicToggleSetting.addEventListener('click', () => {
+        toggleMusic();
+      });
+
+      // SFX toggle
+      sfxToggleSetting.addEventListener('click', () => {
+        sfxOn = !sfxOn;
+        updateSfxUI();
+        playClick();
+      });
+
+      // ================= INIT =================
+      function init() {
+        spawnHearts();
+        updateMusicUI();
+        updateSfxUI();
+        renderScoreboard();
+        // preload audio on first interaction
+        document.body.addEventListener('click', function initAudioOnce() {
+          initAudio();
+          document.body.removeEventListener('click', initAudioOnce);
+        }, { once: true });
+
+        // cek localStorage scoreboard
+        if (!Array.isArray(scoreboard)) scoreboard = [];
+      }
+
+      init();
+
+      // handle visibility change - hentikan timer jika tab tidak aktif? biarkan saja
+      window.addEventListener('beforeunload', () => {
+        clearInterval(timerInterval);
+        stopMusic();
+      });
+
+    })();
+  </script>
+</body>
+</html>
